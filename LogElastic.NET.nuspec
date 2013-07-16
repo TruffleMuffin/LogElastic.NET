@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>LogElastic.NET</id>
+    <version>1.1.1</version>
+    <authors>Gareth Thomas</authors>
+    <owners>Gareth Thomas</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A package containing a collection of Classes that can and should be used for logging needs.</description>
+    <copyright>Copyright 2013</copyright>
+  </metadata>
+  <files>
+    <file src="Build\LogElastic.NET.dll" target="lib\net40" />
+  </files>
+</package>
