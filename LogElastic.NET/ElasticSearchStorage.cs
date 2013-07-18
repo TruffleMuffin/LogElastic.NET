@@ -34,6 +34,11 @@ namespace LogElastic.NET
         private const string LOG_TYPE = "Log";
 
         /// <summary>
+        /// Gets or sets the time in seconds between exporting log entries.
+        /// </summary>
+        internal static int LogDelay { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ElasticSearchStorage"/> class.
         /// </summary>
         public ElasticSearchStorage()
@@ -48,13 +53,16 @@ namespace LogElastic.NET
         /// <param name="port">The port.</param>
         public ElasticSearchStorage(string server, int port = 9200)
         {
+            // Initialise the LogDelay to be a sensible default if not already set
+            if (LogDelay == 0) LogDelay = 60;
+
             connection = new ElasticConnection(server, port);
 
             // Subscribe to Log Publishers
             observer = Observable
                 .FromEventPattern<Entry>(ev => Log.Entries += ev, ev => Log.Entries -= ev)
                 .Select(a => a.EventArgs)
-                .Buffer(TimeSpan.FromSeconds(10))
+                .Buffer(TimeSpan.FromSeconds(LogDelay))
                 .Subscribe(Export);
         }
 
