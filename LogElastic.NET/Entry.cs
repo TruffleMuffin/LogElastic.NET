@@ -10,12 +10,22 @@ namespace LogElastic.NET
     [Serializable]
     public sealed class Entry : EventArgs
     {
+        [NonSerialized]
+        private readonly HttpRequestBase request;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Entry"/> class.
         /// </summary>
         public Entry()
-            : this(HttpContext.Current != null ? new HttpRequestWrapper(HttpContext.Current.Request) : null)
         {
+            try
+            {
+                request = HttpContext.Current != null ? new HttpRequestWrapper(HttpContext.Current.Request) : null;
+                Initialise(DateTime.Now);
+            }
+            catch (HttpException)
+            {
+            }
         }
 
         /// <summary>
@@ -25,16 +35,10 @@ namespace LogElastic.NET
         /// <param name="timestamp">Optioanlly, the timestamp, will be set automatically if not provided.</param>
         public Entry(HttpRequestBase request, DateTime? timestamp = null)
         {
-            if (request != null)
-            {
-                Fields = new EntryFields(request);
-                SourceHost = request.UserHostAddress;
-                SourcePath = request.HttpMethod + " " + request.Url.PathAndQuery;
-            }
-            Id = Guid.NewGuid();
-            Timestamp = timestamp ?? DateTime.Now;
+            this.request = request;
+            Initialise(timestamp);
         }
-
+        
         /// <summary>
         /// Gets or sets the log message.
         /// </summary>
@@ -87,5 +91,21 @@ namespace LogElastic.NET
         /// Gets the id of the <see cref="Entry"/>.
         /// </summary>
         internal Guid Id { get; private set; }
+
+        /// <summary>
+        /// Initialises the <see cref="Entry" />
+        /// </summary>
+        /// <param name="timestamp">The timestamp.</param>
+        private void Initialise(DateTime? timestamp)
+        {
+            if (request != null)
+            {
+                Fields = new EntryFields(request);
+                SourceHost = request.UserHostAddress;
+                SourcePath = request.HttpMethod + " " + request.Url.PathAndQuery;
+            }
+            Id = Guid.NewGuid();
+            Timestamp = timestamp ?? DateTime.Now;
+        }
     }
 }

@@ -43,7 +43,7 @@ namespace LogElastic.NET.Tests
                 Log.Error("Entry Message : {0}", i);
             }
 
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+            Thread.Sleep(TimeSpan.FromSeconds(10));
 
             var serializer = new JsonNetSerializer();
 
