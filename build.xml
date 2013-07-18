@@ -18,8 +18,8 @@
 		<ReportsFolder>$(SourceFolder)\Build\Reports</ReportsFolder>
 		<GallioEcho>C:\program files\gallio\bin\gallio.echo.exe</GallioEcho>
 		<NugetTool>C:\Program Files\NuGet\NuGet.exe</NugetTool>
-		<NugetPackages>D:\Webs\Cdsm.NuGet.Web\Packages</NugetPackages>
-		<PackageName>Cdsm.Logging</PackageName>
+		<NugetPackages>C:\Production\Packages\Feed</NugetPackages>
+		<PackageName>LogElastic.NET</PackageName>
 		<PackagePath>$(PackageName)\</PackagePath>
 	</PropertyGroup>
 	
@@ -42,12 +42,10 @@
 		<Message Text="Regenerating Assembly info..." />
 		
 		<AssemblyInfo CodeLanguage="CS"
-                OutputFile="$(SourceFolder)\Cdsm.Logging\Properties\AssemblyInfo.gen.cs"
+                OutputFile="$(SourceFolder)\LogElastic.NET\Properties\AssemblyInfo.gen.cs"
                 AssemblyVersion="$(BUILD_NUMBER)"
                 AssemblyFileVersion="$(BUILD_NUMBER)"
-				AssemblyCompany="CDSM Interactive Solutions"
-				AssemblyProduct="My Learning Space Family of Products"
-				AssemblyCopyright="Copyright (c) CDSM, 2008-2013"
+				AssemblyCompany="TruffleMuffin"
 		/>
 	</Target>
 	
