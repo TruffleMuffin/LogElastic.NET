@@ -1,7 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using Newtonsoft.Json;
+using System;
 using System.Web;
-using Newtonsoft.Json;
 
 namespace LogElastic.NET
 {
@@ -16,8 +15,6 @@ namespace LogElastic.NET
         public Entry()
         {
             Request = HttpContext.Current != null ? HttpContext.Current.Request : null;
-            Response = HttpContext.Current != null ? HttpContext.Current.Response : null;
-
             Id = Guid.NewGuid();
             Timestamp = DateTime.Now;
         }
@@ -25,18 +22,15 @@ namespace LogElastic.NET
         /// <summary>
         /// Gets or sets the log message.
         /// </summary>
+        [JsonProperty("@message")]
         public string Message { get; set; }
 
         /// <summary>
         /// Gets or sets the severity of the <see cref="Entry"/>.
         /// </summary>
+        [JsonProperty("@type")]
         public string Severity { get; set; }
-
-        /// <summary>
-        /// Gets the id of the <see cref="Entry"/>.
-        /// </summary>
-        public Guid Id { get; private set; }
-
+        
         /// <summary>
         /// Gets the date and time that the <see cref="Entry"/> was raised.
         /// </summary>
@@ -44,44 +38,44 @@ namespace LogElastic.NET
         public DateTime Timestamp { get; private set; }
 
         /// <summary>
+        /// Gets the source of this <see cref="Entry"/>.
+        /// </summary>
+        [JsonProperty("@source")]
+        public string Source { get { return "mls"; } }
+
+        /// <summary>
+        /// Gets the tags of this <see cref="Entry"/>.
+        /// </summary>
+        [JsonProperty("@tags")]
+        public string[] Tags { get { return new string[0]; } }
+
+        /// <summary>
+        /// Gets the source host of the user that caused this <see cref="Entry"/>.
+        /// </summary>
+        [JsonProperty("@source_host")]
+        public string SourceHost { get { return Request == null ? string.Empty : Request.UserHostAddress; } }
+
+        /// <summary>
+        /// Gets the http method and path/query string.
+        /// </summary>
+        [JsonProperty("@source_path")]
+        public string SourcePath { get { return Request == null ? string.Empty : Request.HttpMethod + " " + Request.Url.PathAndQuery; } }
+
+        /// <summary>
+        /// Gets the fields representing extra meta data about this <see cref="Entry"/>.
+        /// </summary>
+        [JsonProperty("@fields")]
+        public EntryFields Fields { get { return new EntryFields(Request); } }
+
+        /// <summary>
+        /// Gets the id of the <see cref="Entry"/>.
+        /// </summary>
+        internal Guid Id { get; private set; }
+
+        /// <summary>
         /// Gets the request associated with the <see cref="Entry"/>.
         /// </summary>
         /// <remarks>Can be null</remarks>
         private HttpRequest Request { get; set; }
-
-        /// <summary>
-        /// Gets the response.
-        /// </summary>
-        private HttpResponse Response { get; set; }
-
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            // Generate a LogStash return value
-            var sb = new StringBuilder(100);
-            sb.Append("{");
-            sb.Append("\"@source\":\"mls\",");
-            sb.Append("\"@tags\":[],");
-            if (Request != null && Response != null)
-            {
-                sb.Append("\"@fields\": {");
-                sb.AppendFormat("\"request\":\"{0} {1}\",", Request.HttpMethod, Request.Url.PathAndQuery);
-                sb.AppendFormat("\"user-agent\":\"{0}\"", Request.UserAgent);
-                sb.Append("},");
-            }
-            sb.AppendFormat("\"@timestamp\":\"{0}\",", Timestamp.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK"));
-            sb.AppendFormat("\"@source_host\":\"{0}\",", Request == null ? string.Empty : Request.UserHostAddress);
-            sb.AppendFormat("\"@source_path\":\"{0}\",", Request == null ? string.Empty : Request.HttpMethod + " " + Request.Url.PathAndQuery);
-            sb.AppendFormat("\"@message\":\"{0}\",", Message);
-            sb.AppendFormat("\"@type\":\"{0}\"", Severity);
-            sb.Append("}");
-
-            return sb.ToString();
-        }
     }
 }

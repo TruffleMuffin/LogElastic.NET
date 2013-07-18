@@ -82,7 +82,7 @@ namespace LogElastic.NET
             // Build a batch based update to avoid memory overhead
             var bulkCommand = new BulkCommand(GetIndex(), LOG_TYPE);
             var bulkJsons = new BulkBuilder(serializer)
-                .PipelineCollection(entries, (builder, entity) => builder.Index(JToken.Parse(entity.ToString()), id: entity.Id.ToString()))
+                .PipelineCollection(entries, (builder, entity) => builder.Index(entity, id: entity.Id.ToString()))
                 .JoinInBatches(batchSize: 1000);
 
             foreach (var bulk in bulkJsons)
