@@ -12,4 +12,4 @@ Installation
 History
 -------------------------
 
-0.0.1 - Project Begings
+0.0.1 - Project Begins
