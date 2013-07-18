@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>LogElastic.NET</id>
-    <version>0.0.2</version>
+    <version>0.0.4</version>
     <authors>Gareth Thomas</authors>
     <owners>Gareth Thomas</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

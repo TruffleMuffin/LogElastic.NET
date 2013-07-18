@@ -2,6 +2,9 @@
 
 namespace LogElastic.NET
 {
+    /// <summary>
+    /// Provides access to logging functionality.
+    /// </summary>
     public static class Log
     {
         private static ElasticSearchStorage storage;
@@ -32,6 +35,18 @@ namespace LogElastic.NET
         public static void Initialise()
         {
             if (storage == null) storage = new ElasticSearchStorage();
+        }
+
+        /// <summary>
+        /// Disables logging.
+        /// </summary>
+        public static void Disable()
+        {
+            if (storage != null)
+            {
+                storage.Dispose();
+                storage = null;
+            }
         }
 
         /// <summary>
