@@ -32,9 +32,9 @@ namespace LogElastic.NET
         /// <summary>
         /// Initialises default logging.
         /// </summary>
-        public static void Initialise()
+        public static void Initialise(string server = "localhost")
         {
-            if (storage == null) storage = new ElasticSearchStorage();
+            if (storage == null) storage = new ElasticSearchStorage(server);
         }
 
         /// <summary>
