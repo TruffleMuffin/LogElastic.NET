@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace LogElastic.NET
 {

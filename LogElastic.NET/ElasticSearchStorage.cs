@@ -1,11 +1,11 @@
-﻿using PlainElastic.Net;
-using PlainElastic.Net.Serialization;
-using PlainElastic.Net.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
+using PlainElastic.Net;
+using PlainElastic.Net.Serialization;
+using PlainElastic.Net.Utils;
 
 namespace LogElastic.NET
 {
@@ -16,6 +16,7 @@ namespace LogElastic.NET
     {
         private readonly IElasticConnection connection;
         private readonly IDisposable observer;
+        private readonly JsonNetSerializer serializer = new JsonNetSerializer();
 
         /// <summary>
         /// The format of the Index
@@ -84,7 +85,6 @@ namespace LogElastic.NET
 
             // setup variable to group all error messages together
             var errorBuilder = new StringBuilder();
-            var serializer = new JsonNetSerializer();
 
             // Build a batch based update to avoid memory overhead
             var bulkCommand = new BulkCommand(GetIndex(), LOG_TYPE);
@@ -99,12 +99,9 @@ namespace LogElastic.NET
                 var bulkResult = serializer.ToBulkResult(result);
 
                 // Check for errors
-                foreach (var operation in bulkResult.items)
+                foreach (var operation in bulkResult.items.Where(a => a.Result.ok == false))
                 {
-                    if (operation.Result.ok == false)
-                    {
-                        errorBuilder.AppendFormat("Id: {0} Error: {1} {2}", operation.Result._id, operation.Result.error, Environment.NewLine);
-                    }
+                    errorBuilder.AppendFormat("Id: {0} Error: {1} {2}", operation.Result._id, operation.Result.error, Environment.NewLine);
                 }
             }
 
