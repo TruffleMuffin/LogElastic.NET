@@ -65,7 +65,7 @@ namespace LogElastic.NET.Tests
                 connection.Head(new IndexExistsCommand(indexName));
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
