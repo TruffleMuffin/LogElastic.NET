@@ -1,0 +1,98 @@
+<Project DefaultTargets="build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<Import Project="..\..\Tools\YUI\YUI.Targets"/>
+	
+	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+	
+	<!-- list of the solutions to build in order -->
+	<ItemGroup>
+		<Solution Include="$(SourceFolder)\$(PackageName).sln" />		
+	</ItemGroup>
+		
+	<ItemGroup>			
+		<TestAssemblies Include="$(BuildFolder)\$(PackageName).Tests.dll" />	
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<BuildFolder>$(SourceFolder)\Build</BuildFolder>		
+		<ReportsFolder>$(SourceFolder)\Build\Reports</ReportsFolder>
+		<GallioEcho>C:\program files\gallio\bin\gallio.echo.exe</GallioEcho>
+		<NugetTool>C:\Program Files\NuGet\NuGet.exe</NugetTool>
+		<NugetPackages>C:\Production\Packages\Feed</NugetPackages>
+		<PackageName>LogElastic.NET</PackageName>
+		<PackagePath>$(PackageName)\</PackagePath>
+	</PropertyGroup>
+	
+	<Target Name="clean">
+		<!-- delete every file in the build folder -->
+		<CreateItem Include="$(BuildFolder)\**\*.*">
+			<Output TaskParameter="Include" ItemName="OldBuildFiles"/>
+		</CreateItem>
+		<Delete Files="@(OldBuildFiles)" />
+
+		<!-- clean the build folder -->
+		<RemoveDir Directories="$(BuildFolder)" />
+
+		<!-- clean all the solutions -->
+		<MSBuild Projects="@(Solution)" Targets="clean" />
+		<MSBuild Projects="@(SolutionInPlace)" Targets="clean" /> 
+	</Target>
+	
+	<Target Name="create-build" DependsOnTargets="clean">
+		<Message Text="Regenerating Assembly info..." />
+		
+		<AssemblyInfo CodeLanguage="CS"
+                OutputFile="$(SourceFolder)\LogElastic.NET\Properties\AssemblyInfo.gen.cs"
+                AssemblyVersion="$(BUILD_NUMBER)"
+                AssemblyFileVersion="$(BUILD_NUMBER)"
+				AssemblyCompany="TruffleMuffin"
+		/>
+	</Target>
+	
+	<Target Name="release-build" DependsOnTargets="create-build">
+		<MSBuild Projects="@(Solution)" Properties="OutputPath=$(BuildFolder)" StopOnFirstFailure="true" />
+
+		<!-- build solutions in place -->
+		<MSBuild Projects="@(SolutionInPlace)" Properties="OutputPath=$(BuildFolder);Configuration=Release" StopOnFirstFailure="true" />
+	</Target>
+	
+	<!-- create and clean the reports folder -->
+	<Target Name="create-reports-folder">
+		<Exec Command="rmdir /s /q $(ReportsFolder)" />
+		<Exec Command="mkdir $(ReportsFolder)" />
+	</Target>
+	
+	<!-- Target for producing reports for test coverage -->
+	<Target Name="coverage" DependsOnTargets="create-reports-folder">
+		<Message text="Running tests" />
+			
+		<!-- Run tests with NCover -->
+		<Exec Command="&quot;$(GallioEcho)&quot; @(TestAssemblies, ' ') /runner:IsolatedProcess /runner-property:NCoverCoverageFile='$(ReportsFolder)\CoverageOutput.xml' /report-directory:$(ReportsFolder) /report-type:Html-Condensed /report-name-format:UnitTests /no-echo-results" IgnoreExitCode="true" />
+	</Target>
+	
+	<Target Name="version-nuget-spec">
+		<Message text="Version nuget package" />
+		<ItemGroup>
+			<NugetSpec Include="$(SourceFolder)\$(PackageName).nuspec" />
+		</ItemGroup>	
+		<Message Text="%(NugetSpec.Identity)" />
+		<XmlUpdate 
+			XmlFileName="%(NugetSpec.Identity)" 
+			Xpath="//package/metadata/version" 
+			Value="$(BUILD_NUMBER)" 
+		/>
+	</Target>
+	
+	<!-- Create the nuget package -->
+	<Target Name="nuget" DependsOnTargets="version-nuget-spec">
+		
+		<Exec Command='"$(NugetTool)" pack "$(SourceFolder)\$(PackageName).nuspec" -verbosity normal' />
+		
+		<Message text="Copying package to nuget server" />
+		
+		<Exec Command='xcopy "$(SourceFolder)\$(PackageName).$(BUILD_NUMBER).nupkg" "$(NugetPackages)" /Y' />
+		<Exec Command='del "$(SourceFolder)\$(PackageName).$(BUILD_NUMBER).nupkg"' />
+		
+	</Target>
+	
+</Project>
