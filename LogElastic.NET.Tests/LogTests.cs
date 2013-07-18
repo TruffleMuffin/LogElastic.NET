@@ -10,19 +10,17 @@ namespace LogElastic.NET.Tests
     [TestFixture]
     public class LogTests
     {
-        private ElasticSearchStorage storage;
-
         [SetUp]
         void SetUp()
         {
             ElasticSearchStorage.LogDelay = 2;
-            storage = new ElasticSearchStorage();
+            Log.Initialise();
         }
 
         [TearDown]
         void TearDown()
         {
-            storage.Dispose();
+            Log.Disable();
         }
 
         /// <summary>
@@ -41,6 +39,8 @@ namespace LogElastic.NET.Tests
             for (var i = 1; i <= 100; i++)
             {
                 Log.Trace("Entry Message : {0}", i);
+                Log.Info("Entry Message : {0}", i);
+                Log.Error("Entry Message : {0}", i);
             }
 
             Thread.Sleep(TimeSpan.FromSeconds(5));
@@ -55,7 +55,7 @@ namespace LogElastic.NET.Tests
             var searchResult = serializer.ToSearchResult<Entry>(result);
 
             // Check all log entries in search index
-            Assert.AreEqual(100, searchResult.hits.total);
+            Assert.AreEqual(300, searchResult.hits.total);
         }
 
         private static bool IsIndexExists(string indexName, ElasticConnection connection)
@@ -65,7 +65,7 @@ namespace LogElastic.NET.Tests
                 connection.Head(new IndexExistsCommand(indexName));
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

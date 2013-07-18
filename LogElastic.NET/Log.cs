@@ -2,8 +2,13 @@
 
 namespace LogElastic.NET
 {
+    /// <summary>
+    /// Provides access to logging functionality.
+    /// </summary>
     public static class Log
     {
+        private static ElasticSearchStorage storage;
+
         /// <summary>
         /// The string value representing Trace Log <see cref="Entry"/>.
         /// </summary>
@@ -23,6 +28,26 @@ namespace LogElastic.NET
         /// The Event that is raised when a <see cref="Entry"/> is created
         /// </summary>
         public static event EventHandler<Entry> Entries;
+
+        /// <summary>
+        /// Initialises default logging.
+        /// </summary>
+        public static void Initialise()
+        {
+            if (storage == null) storage = new ElasticSearchStorage();
+        }
+
+        /// <summary>
+        /// Disables logging.
+        /// </summary>
+        public static void Disable()
+        {
+            if (storage != null)
+            {
+                storage.Dispose();
+                storage = null;
+            }
+        }
 
         /// <summary>
         /// Logs the specified message as an Trace <see cref="Entry"/>
