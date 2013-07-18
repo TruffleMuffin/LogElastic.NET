@@ -13,3 +13,4 @@ History
 -------------------------
 
 0.0.1 - Project Begins
+0.1 - Initial version with limited functionality
