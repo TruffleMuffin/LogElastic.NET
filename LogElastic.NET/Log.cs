@@ -31,7 +31,7 @@ namespace LogElastic.NET
         /// </summary>
         public static void Initialise()
         {
-            storage = new ElasticSearchStorage();
+            if (storage == null) storage = new ElasticSearchStorage();
         }
 
         /// <summary>
