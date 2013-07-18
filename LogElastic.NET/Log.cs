@@ -4,9 +4,24 @@ namespace LogElastic.NET
 {
     public static class Log
     {
+        /// <summary>
+        /// The string value representing Trace Log <see cref="Entry"/>.
+        /// </summary>
         private const string TRACE_TYPE = "Trace";
+
+        /// <summary>
+        /// The string value representing Info Log <see cref="Entry"/>.
+        /// </summary>
         private const string INFO_TYPE = "Info";
+
+        /// <summary>
+        /// The string value representing Error Log <see cref="Entry"/>.
+        /// </summary>
         private const string ERROR_TYPE = "Error";
+
+        /// <summary>
+        /// The Event that is raised when a <see cref="Entry"/> is created
+        /// </summary>
         public static event EventHandler<Entry> Entries;
 
         /// <summary>

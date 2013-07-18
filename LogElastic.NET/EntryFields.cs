@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using Newtonsoft.Json;
 
 namespace LogElastic.NET
@@ -6,19 +7,17 @@ namespace LogElastic.NET
     /// <summary>
     /// Extra information stored inside <see cref="Entry"/> as part of the LogStash standard.
     /// </summary>
-    public class EntryFields
+    [Serializable]
+    public sealed class EntryFields
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EntryFields"/> class.
         /// </summary>
         /// <param name="request">The request.</param>
-        public EntryFields(HttpRequest request)
+        public EntryFields(HttpRequestBase request)
         {
-            if (request != null)
-            {
-                this.Request = request.HttpMethod + " " + request.Url.PathAndQuery;
-                this.UserAgent = request.UserAgent;
-            }
+            this.Request = request.HttpMethod + " " + request.Url.PathAndQuery;
+            this.UserAgent = request.UserAgent;
         }
 
         /// <summary>

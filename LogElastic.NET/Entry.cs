@@ -7,16 +7,32 @@ namespace LogElastic.NET
     /// <summary>
     /// The Event Arguments for a Log Entry
     /// </summary>
-    public class Entry : EventArgs
+    [Serializable]
+    public sealed class Entry : EventArgs
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Entry"/> class.
         /// </summary>
         public Entry()
+            : this(HttpContext.Current != null ? new HttpRequestWrapper(HttpContext.Current.Request) : null)
         {
-            Request = HttpContext.Current != null ? HttpContext.Current.Request : null;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Entry" /> class.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="timestamp">Optioanlly, the timestamp, will be set automatically if not provided.</param>
+        public Entry(HttpRequestBase request, DateTime? timestamp = null)
+        {
+            if (request != null)
+            {
+                Fields = new EntryFields(request);
+                SourceHost = request.UserHostAddress;
+                SourcePath = request.HttpMethod + " " + request.Url.PathAndQuery;
+            }
             Id = Guid.NewGuid();
-            Timestamp = DateTime.Now;
+            Timestamp = timestamp ?? DateTime.Now;
         }
 
         /// <summary>
@@ -30,7 +46,7 @@ namespace LogElastic.NET
         /// </summary>
         [JsonProperty("@type")]
         public string Severity { get; set; }
-        
+
         /// <summary>
         /// Gets the date and time that the <see cref="Entry"/> was raised.
         /// </summary>
@@ -53,29 +69,23 @@ namespace LogElastic.NET
         /// Gets the source host of the user that caused this <see cref="Entry"/>.
         /// </summary>
         [JsonProperty("@source_host")]
-        public string SourceHost { get { return Request == null ? string.Empty : Request.UserHostAddress; } }
+        public string SourceHost { get; private set; }
 
         /// <summary>
         /// Gets the http method and path/query string.
         /// </summary>
         [JsonProperty("@source_path")]
-        public string SourcePath { get { return Request == null ? string.Empty : Request.HttpMethod + " " + Request.Url.PathAndQuery; } }
+        public string SourcePath { get; private set; }
 
         /// <summary>
         /// Gets the fields representing extra meta data about this <see cref="Entry"/>.
         /// </summary>
         [JsonProperty("@fields")]
-        public EntryFields Fields { get { return new EntryFields(Request); } }
+        public EntryFields Fields { get; private set; }
 
         /// <summary>
         /// Gets the id of the <see cref="Entry"/>.
         /// </summary>
         internal Guid Id { get; private set; }
-
-        /// <summary>
-        /// Gets the request associated with the <see cref="Entry"/>.
-        /// </summary>
-        /// <remarks>Can be null</remarks>
-        private HttpRequest Request { get; set; }
     }
 }

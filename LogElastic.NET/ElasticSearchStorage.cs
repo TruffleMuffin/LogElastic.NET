@@ -1,10 +1,9 @@
-﻿using System.Linq;
-using Newtonsoft.Json.Linq;
-using PlainElastic.Net;
+﻿using PlainElastic.Net;
 using PlainElastic.Net.Serialization;
 using PlainElastic.Net.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 
