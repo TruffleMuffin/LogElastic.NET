@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using MbUnit.Framework;
+﻿using MbUnit.Framework;
 using PlainElastic.Net;
 using PlainElastic.Net.Queries;
 using PlainElastic.Net.Serialization;
+using System;
+using System.Threading;
 
 namespace LogElastic.NET.Tests
 {
@@ -14,19 +14,21 @@ namespace LogElastic.NET.Tests
         void SetUp()
         {
             ElasticSearchStorage.LogDelay = 2;
+            Settings.LoggingEnabled = true;
             Log.Initialise();
         }
 
         [TearDown]
         void TearDown()
         {
+            Settings.LoggingEnabled = false;
             Log.Disable();
         }
 
         /// <summary>
         /// <see cref="Log"/> Integration Test
         /// </summary>
-        [Test]
+        [Test(Order = 1)]
         void Log_Events_Expected()
         {
             // Dev note - this builds the index, but need to run tests again to work
@@ -54,6 +56,39 @@ namespace LogElastic.NET.Tests
             string result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
             var searchResult = serializer.ToSearchResult<Entry>(result);
 
+            // Check all log entries in search index
+            Assert.AreEqual(300, searchResult.hits.total);
+        }
+
+        /// <summary>
+        /// <see cref="Log"/> Integration Test
+        /// </summary>
+        [Test(Order = 2)]
+        void Log_Disabled_Events_Expected()
+        {
+            Settings.LoggingEnabled = false;
+
+            // Dev note - this builds the index, but need to run tests again to work
+            var connection = new ElasticConnection("localhost", 9200);
+
+            for (var i = 1; i <= 100; i++)
+            {
+                Log.Trace("Entry Message : {0}", i);
+                Log.Info("Entry Message : {0}", i);
+                Log.Error("Entry Message : {0}", i);
+            }
+
+            Thread.Sleep(TimeSpan.FromSeconds(5));
+
+            var serializer = new JsonNetSerializer();
+
+            // Build the Search Query
+            var query = new QueryBuilder<Entry>().Build();
+
+            // Execute the search
+            string result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
+            var searchResult = serializer.ToSearchResult<Entry>(result);
+            
             // Check all log entries in search index
             Assert.AreEqual(300, searchResult.hits.total);
         }
