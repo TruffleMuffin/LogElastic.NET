@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using MbUnit.Framework;
+﻿using MbUnit.Framework;
 using PlainElastic.Net;
 using PlainElastic.Net.Queries;
 using PlainElastic.Net.Serialization;
+using System;
+using System.Threading;
 
 namespace LogElastic.NET.Tests
 {
@@ -88,7 +88,7 @@ namespace LogElastic.NET.Tests
             // Execute the search
             string result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
             var searchResult = serializer.ToSearchResult<Entry>(result);
-
+            
             // Check all log entries in search index
             Assert.AreEqual(300, searchResult.hits.total);
         }
