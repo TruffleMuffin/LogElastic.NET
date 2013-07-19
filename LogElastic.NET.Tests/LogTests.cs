@@ -14,12 +14,14 @@ namespace LogElastic.NET.Tests
         void SetUp()
         {
             ElasticSearchStorage.LogDelay = 2;
+            Settings.LoggingEnabled = true;
             Log.Initialise();
         }
 
         [TearDown]
         void TearDown()
         {
+            Settings.LoggingEnabled = false;
             Log.Disable();
         }
 

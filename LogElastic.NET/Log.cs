@@ -34,7 +34,10 @@ namespace LogElastic.NET
         /// </summary>
         public static void Initialise(string server = "localhost")
         {
-            if (storage == null) storage = new ElasticSearchStorage(server);
+            if (Settings.LoggingEnabled)
+            {
+                if (storage == null) storage = new ElasticSearchStorage(server);
+            }
         }
 
         /// <summary>
@@ -42,10 +45,13 @@ namespace LogElastic.NET
         /// </summary>
         public static void Disable()
         {
-            if (storage != null)
+            if (Settings.LoggingEnabled)
             {
-                storage.Dispose();
-                storage = null;
+                if (storage != null)
+                {
+                    storage.Dispose();
+                    storage = null;
+                }
             }
         }
 
@@ -56,7 +62,7 @@ namespace LogElastic.NET
         /// <param name="args">The args.</param>
         public static void Trace(string message, params object[] args)
         {
-            if (Entries != null)
+            if (Settings.LoggingEnabled && Entries != null)
             {
                 Entries(null, new Entry { Message = string.Format(message, args), Severity = TRACE_TYPE });
             }
@@ -69,7 +75,7 @@ namespace LogElastic.NET
         /// <param name="args">The args.</param>
         public static void Info(string message, params object[] args)
         {
-            if (Entries != null)
+            if (Settings.LoggingEnabled && Entries != null)
             {
                 Entries(null, new Entry { Message = string.Format(message, args), Severity = INFO_TYPE });
             }
@@ -82,7 +88,7 @@ namespace LogElastic.NET
         /// <param name="args">The args.</param>
         public static void Error(string message, params object[] args)
         {
-            if (Entries != null)
+            if (Settings.LoggingEnabled && Entries != null)
             {
                 Entries(null, new Entry { Message = string.Format(message, args), Severity = ERROR_TYPE });
             }
