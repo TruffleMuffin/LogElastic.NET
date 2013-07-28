@@ -5,7 +5,7 @@ namespace LogElastic.NET
     /// <summary>
     /// Provides access to logging functionality.
     /// </summary>
-    public static class Log
+    public class Log
     {
         /// <summary>
         /// The string value representing Trace Log <see cref="Entry"/>.
@@ -31,7 +31,7 @@ namespace LogElastic.NET
         /// Gets an instance of a <see cref="ILog"/> logger.
         /// </summary>
         /// <returns>A logger</returns>
-        public static ILog GetLogger()
+        public virtual ILog GetLogger()
         {
             return new DebugOnlyLogger();
         }

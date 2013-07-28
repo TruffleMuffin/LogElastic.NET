@@ -6,7 +6,7 @@ A logging tool that uses Logstash based entries and ElasticSearch via PlainElast
 Usage
 -------------------------
 		
-You should call Log.Initialise() or Log.Initialise("ip") when your ElasticSearch installation is not hosted locally. If you have an AppSetting "LogElastic.Enabled" set as a true for your application, Log.Initialise() will attach the Log Storage mechanism and LogElastic.NET will begin to export your Log messages to ElasticSearch.
+You should call Log.Initialise() or Log.Initialise("ip") when your ElasticSearch installation is not hosted locally. If you have an AppSetting "LogElastic.Enabled" set as a true for your application, Log.Initialise() will attach the Log Storage mechanism and LogElastic.NET will begin to export your Log messages to ElasticSearch. **DEPRECATED 0.4 - To be updated**
 
 You can call Log.Trace(), Log.Info() and Log.Error() always with little performance overhead when Logging is Enabled or Disabled. These methods raise events that the Storage actions - only after Initialised with the AppSetting turned on - in a seperate Thread every 60 seconds.
 
@@ -21,3 +21,5 @@ History
 * 0.0.1 - Project Begins
 * 0.1 - Initial version with limited functionality
 * 0.2 - Ability to turn logging on and off
+* 0.3 - Ability to turn use an instance logger that can be tested
+* 0.4 - Ability to turn logging on and off via ApiController and refactoring of components for new NuGet packages

@@ -8,6 +8,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A package containing a collection of Classes that can and should be used for logging needs.</description>
     <copyright>Copyright 2013</copyright>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="5.0.6" />
+    </dependencies>
   </metadata>
   <files>
     <file src="Build\LogElastic.NET.dll" target="lib\net40" />

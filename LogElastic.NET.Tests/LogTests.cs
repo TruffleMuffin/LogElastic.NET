@@ -63,7 +63,7 @@ namespace LogElastic.NET.Tests
             Assert.AreEqual(300, searchResult.hits.total);
 
             // Secondary check, use the instance based loger
-            using (var log = Log.GetLogger())
+            using (var log = new Log().GetLogger())
             {
                 for (var i = 1; i <= 100; i++)
                 {
