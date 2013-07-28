@@ -7,8 +7,6 @@ namespace LogElastic.NET
     /// </summary>
     public static class Log
     {
-        private static ElasticSearchStorage storage;
-
         /// <summary>
         /// The string value representing Trace Log <see cref="Entry"/>.
         /// </summary>
@@ -37,33 +35,7 @@ namespace LogElastic.NET
         {
             return new DebugOnlyLogger();
         }
-
-        /// <summary>
-        /// Initialises default logging.
-        /// </summary>
-        public static void Initialise(string server = "localhost")
-        {
-            if (Settings.LoggingEnabled)
-            {
-                if (storage == null) storage = new ElasticSearchStorage(server);
-            }
-        }
-
-        /// <summary>
-        /// Disables logging.
-        /// </summary>
-        public static void Disable()
-        {
-            if (Settings.LoggingEnabled)
-            {
-                if (storage != null)
-                {
-                    storage.Dispose();
-                    storage = null;
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Logs the specified message as a Trace <see cref="Entry"/>
         /// </summary>

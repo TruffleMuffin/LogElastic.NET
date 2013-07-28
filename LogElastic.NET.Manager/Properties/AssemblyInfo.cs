@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LogElastic.NET")]
-[assembly: AssemblyDescription("Core Library for LogElastic.NET Component")]
+[assembly: AssemblyTitle("LogElastic.NET.Manager")]
+[assembly: AssemblyDescription("LogElastic.NET Management and Control")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 
@@ -16,6 +16,5 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("847b77bd-6a78-40d1-a9dc-0a8373cb32af")]
-[assembly: InternalsVisibleTo("LogElastic.NET.Manager")]
+[assembly: Guid("f2777910-5fa7-4d54-9042-a5b4f034e613")]
 [assembly: InternalsVisibleTo("LogElastic.NET.Tests")]

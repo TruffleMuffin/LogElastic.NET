@@ -1,7 +1,10 @@
-﻿using MbUnit.Framework;
+﻿#define DEBUG
+
+using MbUnit.Framework;
 
 namespace LogElastic.NET.Tests
 {
+
     [TestFixture]
     public class DebugOnlyLoggerTests
     {
@@ -11,27 +14,36 @@ namespace LogElastic.NET.Tests
         public void SetUp()
         {
             target = new DebugOnlyLogger();
+            Log.Entries += LogFailure;
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            Log.Entries -= LogFailure;
         }
 
         [Test]
         public void Info_WhenInDebugMode_DoesntLog()
         {
-            Log.Entries += (sender, args) => Assert.Fail("Something was logged");
             target.Info("My Message");
         }
 
         [Test]
         public void Trace_WhenInDebugMode_DoesntLog()
         {
-            Log.Entries += (sender, args) => Assert.Fail("Something was logged");
             target.Trace("My Message");
         }
 
         [Test]
         public void Error_WhenInDebugMode_DoesntLog()
         {
-            Log.Entries += (sender, args) => Assert.Fail("Something was logged");
             target.Error("My Message");
+        }
+
+        private void LogFailure(object sender, Entry args)
+        {
+            Assert.Fail("Something was logged");
         }
     }
 }

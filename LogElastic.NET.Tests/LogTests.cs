@@ -1,5 +1,8 @@
-﻿using System;
+﻿#undef DEBUG
+
+using System;
 using System.Threading;
+using LogElastic.NET.Manager;
 using MbUnit.Framework;
 using PlainElastic.Net;
 using PlainElastic.Net.Queries;
@@ -15,14 +18,14 @@ namespace LogElastic.NET.Tests
         {
             ElasticSearchStorage.LogDelay = 2;
             Settings.LoggingEnabled = true;
-            Log.Initialise();
+            Storage.Initialise();
         }
 
         [TearDown]
         void TearDown()
         {
             Settings.LoggingEnabled = false;
-            Log.Disable();
+            Storage.Disable();
         }
 
         /// <summary>
@@ -44,20 +47,43 @@ namespace LogElastic.NET.Tests
                 Log.Info("Entry Message : {0}", i);
                 Log.Error("Entry Message : {0}", i);
             }
-
+            
             Thread.Sleep(TimeSpan.FromSeconds(5));
 
             var serializer = new JsonNetSerializer();
 
             // Build the Search Query
             var query = new QueryBuilder<Entry>().Build();
-            
+
             // Execute the search
             string result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
             var searchResult = serializer.ToSearchResult<Entry>(result);
 
             // Check all log entries in search index
             Assert.AreEqual(300, searchResult.hits.total);
+
+            // Secondary check, use the instance based loger
+            using (var log = Log.GetLogger())
+            {
+                for (var i = 1; i <= 100; i++)
+                {
+                    log.Trace("Entry Message : {0}", i);
+                    log.Info("Entry Message : {0}", i);
+                    log.Error("Entry Message : {0}", i);
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+
+                // Build the Search Query
+                query = new QueryBuilder<Entry>().Build();
+
+                // Execute the search
+                result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
+                searchResult = serializer.ToSearchResult<Entry>(result);
+
+                // Check all log entries in search index
+                Assert.AreEqual(600, searchResult.hits.total);
+            }
         }
 
         /// <summary>
@@ -88,11 +114,11 @@ namespace LogElastic.NET.Tests
             // Execute the search
             string result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
             var searchResult = serializer.ToSearchResult<Entry>(result);
-            
-            // Check all log entries in search index
-            Assert.AreEqual(300, searchResult.hits.total);
-        }
 
+            // Check all log entries in search index
+            Assert.AreEqual(600, searchResult.hits.total);
+        }
+        
         private static bool IsIndexExists(string indexName, ElasticConnection connection)
         {
             try
