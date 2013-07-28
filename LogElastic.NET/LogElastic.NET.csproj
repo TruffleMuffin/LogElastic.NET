@@ -65,7 +65,9 @@
     <Compile Include="ElasticSearchStorage.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="EntryFields.cs" />
+    <Compile Include="ILog.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="DebugOnlyLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>

@@ -30,6 +30,15 @@ namespace LogElastic.NET
         public static event EventHandler<Entry> Entries;
 
         /// <summary>
+        /// Gets an instance of a <see cref="ILog"/> logger.
+        /// </summary>
+        /// <returns>A logger</returns>
+        public static ILog GetLogger()
+        {
+            return new DebugOnlyLogger();
+        }
+
+        /// <summary>
         /// Initialises default logging.
         /// </summary>
         public static void Initialise(string server = "localhost")
@@ -56,7 +65,7 @@ namespace LogElastic.NET
         }
 
         /// <summary>
-        /// Logs the specified message as an Trace <see cref="Entry"/>
+        /// Logs the specified message as a Trace <see cref="Entry"/>
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>
@@ -69,7 +78,7 @@ namespace LogElastic.NET
         }
 
         /// <summary>
-        /// Logs the specified message as an Info <see cref="Entry"/>
+        /// Logs the specified message as a Info <see cref="Entry"/>
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>
@@ -82,7 +91,7 @@ namespace LogElastic.NET
         }
 
         /// <summary>
-        /// Logs the specified message as an Error <see cref="Entry"/>
+        /// Logs the specified message as a Error <see cref="Entry"/>
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>

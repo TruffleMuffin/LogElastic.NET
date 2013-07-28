@@ -1,9 +1,9 @@
-﻿using MbUnit.Framework;
+﻿using System;
+using System.Threading;
+using MbUnit.Framework;
 using PlainElastic.Net;
 using PlainElastic.Net.Queries;
 using PlainElastic.Net.Serialization;
-using System;
-using System.Threading;
 
 namespace LogElastic.NET.Tests
 {
