@@ -8,6 +8,15 @@ namespace LogElastic.NET
     public interface ILog : IDisposable
     {
         /// <summary>
+        /// Gets a value indicating whether this <see cref="ILog"/> is enabled. This indicates the current value of the global setting for
+        /// turning logging output on and off.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if enabled; otherwise, <c>false</c>.
+        /// </value>
+        bool Enabled { get; }
+
+        /// <summary>
         /// Logs the specified message as a Trace <see cref="Entry"/>
         /// </summary>
         /// <param name="message">The message.</param>

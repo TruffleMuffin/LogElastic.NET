@@ -26,6 +26,9 @@ namespace LogElastic.NET.Tests
         {
             Settings.LoggingEnabled = false;
             Storage.Disable();
+
+            // Turn off listening to the Event
+            Log.Entries -= Log_Entries;
         }
 
         /// <summary>
@@ -47,7 +50,7 @@ namespace LogElastic.NET.Tests
                 Log.Info("Entry Message : {0}", i);
                 Log.Error("Entry Message : {0}", i);
             }
-            
+
             Thread.Sleep(TimeSpan.FromSeconds(5));
 
             var serializer = new JsonNetSerializer();
@@ -63,7 +66,7 @@ namespace LogElastic.NET.Tests
             Assert.AreEqual(300, searchResult.hits.total);
 
             // Secondary check, use the instance based loger
-            using (var log = new Log().GetLogger())
+            using (var log = Log.GetLogger())
             {
                 for (var i = 1; i <= 100; i++)
                 {
@@ -118,7 +121,29 @@ namespace LogElastic.NET.Tests
             // Check all log entries in search index
             Assert.AreEqual(600, searchResult.hits.total);
         }
-        
+
+        [Test(Order = 3)]
+        void Log_Performance_Expected()
+        {
+            // Disable logging to elastic search, we will test with manually events
+            Storage.Disable();
+
+            // Listen to the Event
+            Log.Entries += Log_Entries;
+
+            using (Log.Performance())
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(2));
+            }
+        }
+
+        void Log_Entries(object sender, Entry e)
+        {
+            Assert.AreEqual(null, sender);
+            Assert.StartsWith(e.Message, "\'LogElastic.NET.Tests.LogTestsLog_Performance_Expected\' executed in ");
+            Assert.Contains(e.Message, "\'00:00:02");
+        }
+
         private static bool IsIndexExists(string indexName, ElasticConnection connection)
         {
             try

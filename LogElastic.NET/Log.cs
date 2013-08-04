@@ -5,7 +5,7 @@ namespace LogElastic.NET
     /// <summary>
     /// Provides access to logging functionality.
     /// </summary>
-    public class Log
+    public static class Log
     {
         /// <summary>
         /// The string value representing Trace Log <see cref="Entry"/>.
@@ -31,9 +31,18 @@ namespace LogElastic.NET
         /// Gets an instance of a <see cref="ILog"/> logger.
         /// </summary>
         /// <returns>A logger</returns>
-        public virtual ILog GetLogger()
+        public static ILog GetLogger()
         {
             return new DebugOnlyLogger();
+        }
+
+        /// <summary>
+        /// Gets an instance of a <see cref="PerformanceTracker"/> to track performance metrics with <see cref="Log"/>.
+        /// </summary>
+        /// <returns>A performance tracker</returns>
+        public static PerformanceTracker Performance(string name = null)
+        {
+            return new PerformanceTracker(Log.GetLogger(), name);
         }
         
         /// <summary>

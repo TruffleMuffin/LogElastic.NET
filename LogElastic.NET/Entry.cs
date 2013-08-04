@@ -61,13 +61,13 @@ namespace LogElastic.NET
         /// Gets the source of this <see cref="Entry"/>.
         /// </summary>
         [JsonProperty("@source")]
-        public string Source { get { return "mls"; } }
+        public string Source { get; set; }
 
         /// <summary>
         /// Gets the tags of this <see cref="Entry"/>.
         /// </summary>
         [JsonProperty("@tags")]
-        public string[] Tags { get { return new string[0]; } }
+        public string[] Tags { get; set; }
 
         /// <summary>
         /// Gets the source host of the user that caused this <see cref="Entry"/>.
