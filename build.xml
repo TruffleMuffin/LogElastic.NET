@@ -80,6 +80,7 @@
 		<Message text="Version nuget package" />
 		<ItemGroup>
 			<NugetSpec Include="$(SourceFolder)\$(PackageName).nuspec" />
+			<NugetSpec Include="$(SourceFolder)\$(PackageName).Manager.nuspec" />
 		</ItemGroup>	
 		<Message Text="%(NugetSpec.Identity)" />
 		<XmlUpdate 
