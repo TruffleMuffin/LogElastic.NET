@@ -17,6 +17,12 @@ namespace LogElastic.NET
         bool Enabled { get; }
 
         /// <summary>
+        /// Logs the specified <see cref="Entry"/>.
+        /// </summary>
+        /// <param name="entry">The entry.</param>
+        void This(Entry entry);
+
+        /// <summary>
         /// Logs the specified message as a Trace <see cref="Entry"/>
         /// </summary>
         /// <param name="message">The message.</param>

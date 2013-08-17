@@ -24,6 +24,12 @@ namespace LogElastic.NET.Tests
         }
 
         [Test]
+        public void This_WhenInDebugMode_DoesntLog()
+        {
+            target.This(new Entry { Message = "My Message" });
+        }
+
+        [Test]
         public void Info_WhenInDebugMode_DoesntLog()
         {
             target.Info("My Message");

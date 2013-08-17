@@ -44,6 +44,18 @@ namespace LogElastic.NET
         {
             return new PerformanceTracker(Log.GetLogger(), name);
         }
+
+        /// <summary>
+        /// Logs the specified <see cref="Entry"/>.
+        /// </summary>
+        /// <param name="entry">The entry.</param>
+        public static void This(Entry entry)
+        {
+            if (Settings.LoggingEnabled && Entries != null)
+            {
+                Entries(null, entry);
+            }
+        }
         
         /// <summary>
         /// Logs the specified message as a Trace <see cref="Entry"/>

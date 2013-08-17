@@ -33,6 +33,17 @@
         }
 
         /// <summary>
+        /// Logs the specified <see cref="Entry"/>.
+        /// </summary>
+        /// <param name="entry">The entry.</param>
+        public void This(Entry entry)
+        {
+#if DEBUG
+            Log.This(entry);
+#endif
+        }
+
+        /// <summary>
         /// Logs the specified message as a Trace <see cref="Entry" />
         /// </summary>
         /// <param name="message">The message.</param>
