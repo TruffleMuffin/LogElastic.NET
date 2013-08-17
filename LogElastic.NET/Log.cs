@@ -7,8 +7,6 @@ namespace LogElastic.NET
     /// </summary>
     public static class Log
     {
-        private static ElasticSearchStorage storage;
-
         /// <summary>
         /// The string value representing Trace Log <see cref="Entry"/>.
         /// </summary>
@@ -30,33 +28,37 @@ namespace LogElastic.NET
         public static event EventHandler<Entry> Entries;
 
         /// <summary>
-        /// Initialises default logging.
+        /// Gets an instance of a <see cref="ILog"/> logger.
         /// </summary>
-        public static void Initialise(string server = "localhost")
+        /// <returns>A logger</returns>
+        public static ILog GetLogger()
         {
-            if (Settings.LoggingEnabled)
-            {
-                if (storage == null) storage = new ElasticSearchStorage(server);
-            }
+            return Injector.Get<ILog>();
         }
 
         /// <summary>
-        /// Disables logging.
+        /// Gets an instance of a <see cref="PerformanceTracker"/> to track performance metrics with <see cref="Log"/>.
         /// </summary>
-        public static void Disable()
+        /// <returns>A performance tracker</returns>
+        public static PerformanceTracker Performance(string name = null)
         {
-            if (Settings.LoggingEnabled)
-            {
-                if (storage != null)
-                {
-                    storage.Dispose();
-                    storage = null;
-                }
-            }
+            return new PerformanceTracker(Log.GetLogger(), name);
         }
 
         /// <summary>
-        /// Logs the specified message as an Trace <see cref="Entry"/>
+        /// Logs the specified <see cref="Entry"/>.
+        /// </summary>
+        /// <param name="entry">The entry.</param>
+        public static void This(Entry entry)
+        {
+            if (Settings.LoggingEnabled && Entries != null)
+            {
+                Entries(null, entry);
+            }
+        }
+        
+        /// <summary>
+        /// Logs the specified message as a Trace <see cref="Entry"/>
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>
@@ -69,7 +71,7 @@ namespace LogElastic.NET
         }
 
         /// <summary>
-        /// Logs the specified message as an Info <see cref="Entry"/>
+        /// Logs the specified message as a Info <see cref="Entry"/>
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>
@@ -82,7 +84,7 @@ namespace LogElastic.NET
         }
 
         /// <summary>
-        /// Logs the specified message as an Error <see cref="Entry"/>
+        /// Logs the specified message as a Error <see cref="Entry"/>
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>

@@ -1,9 +1,12 @@
-﻿using MbUnit.Framework;
+﻿#undef DEBUG
+
+using System;
+using System.Threading;
+using LogElastic.NET.Manager;
+using MbUnit.Framework;
 using PlainElastic.Net;
 using PlainElastic.Net.Queries;
 using PlainElastic.Net.Serialization;
-using System;
-using System.Threading;
 
 namespace LogElastic.NET.Tests
 {
@@ -14,15 +17,24 @@ namespace LogElastic.NET.Tests
         void SetUp()
         {
             ElasticSearchStorage.LogDelay = 2;
+            
+            if (InternalResolver.ResolveMap.ContainsKey(typeof(ElasticSearchStorage)) == false)
+            {
+                InternalResolver.ResolveMap.Add(typeof(ElasticSearchStorage), new ElasticSearchStorage());
+            }    
+
             Settings.LoggingEnabled = true;
-            Log.Initialise();
+            Storage.Initialise();
         }
 
         [TearDown]
         void TearDown()
         {
             Settings.LoggingEnabled = false;
-            Log.Disable();
+            Storage.Disable();
+
+            // Turn off listening to the Event
+            Log.Entries -= Log_Entries;
         }
 
         /// <summary>
@@ -51,13 +63,36 @@ namespace LogElastic.NET.Tests
 
             // Build the Search Query
             var query = new QueryBuilder<Entry>().Build();
-            
+
             // Execute the search
             string result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
             var searchResult = serializer.ToSearchResult<Entry>(result);
 
             // Check all log entries in search index
             Assert.AreEqual(300, searchResult.hits.total);
+
+            // Secondary check, use the instance based loger
+            using (var log = Log.GetLogger())
+            {
+                for (var i = 1; i <= 100; i++)
+                {
+                    log.Trace("Entry Message : {0}", i);
+                    log.Info("Entry Message : {0}", i);
+                    log.Error("Entry Message : {0}", i);
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+
+                // Build the Search Query
+                query = new QueryBuilder<Entry>().Build();
+
+                // Execute the search
+                result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
+                searchResult = serializer.ToSearchResult<Entry>(result);
+
+                // Check all log entries in search index
+                Assert.AreEqual(600, searchResult.hits.total);
+            }
         }
 
         /// <summary>
@@ -88,9 +123,31 @@ namespace LogElastic.NET.Tests
             // Execute the search
             string result = connection.Post(Commands.Search(ElasticSearchStorage.GetIndex(), "Log"), query);
             var searchResult = serializer.ToSearchResult<Entry>(result);
-            
+
             // Check all log entries in search index
-            Assert.AreEqual(300, searchResult.hits.total);
+            Assert.AreEqual(600, searchResult.hits.total);
+        }
+
+        [Test(Order = 3)]
+        void Log_Performance_Expected()
+        {
+            // Disable logging to elastic search, we will test with manually events
+            Storage.Disable();
+
+            // Listen to the Event
+            Log.Entries += Log_Entries;
+
+            using (Log.Performance())
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(2));
+            }
+        }
+
+        void Log_Entries(object sender, Entry e)
+        {
+            Assert.AreEqual(null, sender);
+            Assert.StartsWith(e.Message, "\'LogElastic.NET.Tests.LogTestsLog_Performance_Expected\' executed in ");
+            Assert.Contains(e.Message, "\'00:00:02");
         }
 
         private static bool IsIndexExists(string indexName, ElasticConnection connection)

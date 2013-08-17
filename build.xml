@@ -20,7 +20,6 @@
 		<NugetTool>C:\Program Files\NuGet\NuGet.exe</NugetTool>
 		<NugetPackages>C:\Production\Packages\Feed</NugetPackages>
 		<PackageName>LogElastic.NET</PackageName>
-		<PackagePath>$(PackageName)\</PackagePath>
 	</PropertyGroup>
 	
 	<Target Name="clean">
@@ -43,6 +42,13 @@
 		
 		<AssemblyInfo CodeLanguage="CS"
                 OutputFile="$(SourceFolder)\LogElastic.NET\Properties\AssemblyInfo.gen.cs"
+                AssemblyVersion="$(BUILD_NUMBER)"
+                AssemblyFileVersion="$(BUILD_NUMBER)"
+				AssemblyCompany="TruffleMuffin"
+		/>
+
+		<AssemblyInfo CodeLanguage="CS"
+                OutputFile="$(SourceFolder)\LogElastic.NET.Manager\Properties\AssemblyInfo.gen.cs"
                 AssemblyVersion="$(BUILD_NUMBER)"
                 AssemblyFileVersion="$(BUILD_NUMBER)"
 				AssemblyCompany="TruffleMuffin"
@@ -74,6 +80,7 @@
 		<Message text="Version nuget package" />
 		<ItemGroup>
 			<NugetSpec Include="$(SourceFolder)\$(PackageName).nuspec" />
+			<NugetSpec Include="$(SourceFolder)\$(PackageName).Manager.nuspec" />
 		</ItemGroup>	
 		<Message Text="%(NugetSpec.Identity)" />
 		<XmlUpdate 
@@ -87,11 +94,15 @@
 	<Target Name="nuget" DependsOnTargets="version-nuget-spec">
 		
 		<Exec Command='"$(NugetTool)" pack "$(SourceFolder)\$(PackageName).nuspec" -verbosity normal' />
+		<Exec Command='"$(NugetTool)" pack "$(SourceFolder)\$(PackageName).Manager.nuspec" -verbosity normal' />
 		
 		<Message text="Copying package to nuget server" />
 		
 		<Exec Command='xcopy "$(SourceFolder)\$(PackageName).$(BUILD_NUMBER).nupkg" "$(NugetPackages)" /Y' />
 		<Exec Command='del "$(SourceFolder)\$(PackageName).$(BUILD_NUMBER).nupkg"' />
+
+		<Exec Command='xcopy "$(SourceFolder)\$(PackageName).Manager.$(BUILD_NUMBER).nupkg" "$(NugetPackages)" /Y' />
+		<Exec Command='del "$(SourceFolder)\$(PackageName).Manager.$(BUILD_NUMBER).nupkg"' />
 		
 	</Target>
 	
