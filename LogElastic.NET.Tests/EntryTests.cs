@@ -48,7 +48,7 @@ namespace LogElastic.NET.Tests
                     };
                 var serializer = new JsonNetSerializer();
                 var result = serializer.Serialize(target);
-                var expected = "{\"@message\":\"My Message\",\"@type\":\"Trace\",\"@timestamp\":\"2013-07-18T11:13:32.3149976+01:00\",\"@source\":\"mls\",\"@tags\":[],\"@source_host\":\"http://192.168.0.1\",\"@source_path\":\"GET /Some/Path/?query=somewhere\",\"@fields\":{\"request\":\"GET /Some/Path/?query=somewhere\",\"user-agent\":\"Chrome\"}}";
+                var expected = "{\"@message\":\"My Message\",\"@type\":\"Trace\",\"@timestamp\":\"2013-07-18T11:13:32.3149976+01:00\",\"@source_host\":\"http://192.168.0.1\",\"@source_path\":\"GET /Some/Path/?query=somewhere\",\"@fields\":{\"request\":\"GET /Some/Path/?query=somewhere\",\"user-agent\":\"Chrome\"}}";
                 Assert.AreEqual(expected, result);
             }
         }

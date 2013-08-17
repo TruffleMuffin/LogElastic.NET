@@ -13,7 +13,7 @@ namespace LogElastic.NET.Manager
         /// </summary>
         public static void Initialise()
         {
-            if (storage == null) storage = new ElasticSearchStorage();
+            if (storage == null) storage = Injector.Get<ElasticSearchStorage>();
         }
 
         /// <summary>

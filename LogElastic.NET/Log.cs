@@ -33,7 +33,7 @@ namespace LogElastic.NET
         /// <returns>A logger</returns>
         public static ILog GetLogger()
         {
-            return new DebugOnlyLogger();
+            return Injector.Get<ILog>();
         }
 
         /// <summary>

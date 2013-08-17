@@ -90,6 +90,7 @@
   <ItemGroup>
     <Compile Include="DebugOnlyLoggerTests.cs" />
     <Compile Include="EntryTests.cs" />
+    <Compile Include="LogElasticControllerTests.cs" />
     <Compile Include="LogTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -49,6 +49,9 @@
     <Compile Include="Entry.cs" />
     <Compile Include="EntryFields.cs" />
     <Compile Include="ILog.cs" />
+    <Compile Include="Injector.cs" />
+    <Compile Include="InternalResolver.cs" />
+    <Compile Include="IResolver.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="DebugOnlyLogger.cs" />
     <Compile Include="PerformanceTracker.cs" />

@@ -17,6 +17,12 @@ namespace LogElastic.NET.Tests
         void SetUp()
         {
             ElasticSearchStorage.LogDelay = 2;
+            
+            if (InternalResolver.ResolveMap.ContainsKey(typeof(ElasticSearchStorage)) == false)
+            {
+                InternalResolver.ResolveMap.Add(typeof(ElasticSearchStorage), new ElasticSearchStorage());
+            }    
+
             Settings.LoggingEnabled = true;
             Storage.Initialise();
         }
